@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Users } from 'src/schemas/users.schema';
@@ -26,7 +32,23 @@ export class AuthService {
   }
 
   async login(loginUser: CreateAuthDto) {
-    console.log('Logged in');
+    const { username, password } = loginUser;
+
+    const user = await this.userModel.findOne({
+      username: username,
+    });
+
+    if (!user) {
+      throw new BadRequestException(username, 'Wrong username credentials!');
+    }
+    const isPasswordOK = await this.userModel.findOne({
+      password: password,
+    });
+
+    if (!isPasswordOK) {
+      throw new BadRequestException(password, 'Wrong password credentials!');
+    }
+    return 'Succesfull login! 👍';
   }
 
   findAll() {
