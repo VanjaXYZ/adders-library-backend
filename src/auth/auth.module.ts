@@ -8,7 +8,11 @@ import { AuthService } from './auth.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Users.name, schema: UsersSchema }]),
-    JwtModule.register({ secret: 'jwtSecret' }),
+    JwtModule.register({
+      global: true,
+      secret: 'jwtSecret',
+      signOptions: { expiresIn: '24h' },
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],
