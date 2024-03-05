@@ -19,7 +19,6 @@ export class AuthService {
   constructor(
     @InjectModel(Users.name) private userModel: Model<Users>,
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -45,9 +44,6 @@ export class AuthService {
         username: username,
       })
       .lean();
-
-    const test = await this.userService.findByUsername(username);
-    console.log('USER INFO: ', test);
 
     if (!user) {
       throw new BadRequestException(username, 'Wrong username credentials!');
