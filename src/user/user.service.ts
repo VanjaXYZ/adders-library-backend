@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Users } from 'src/schemas/users.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  constructor(@InjectModel(Users.name) private userModel: Model<Users>) {}
+
+  // async createUser(createUserDto: CreateUserDto) {
+  //   const user = await this.userModel.findOne({
+  //     username: createUserDto.username,
+  //   });
+
+  //   if (user) {
+  //     throw new HttpException(
+  //       'Username already taken.',
+  //       HttpStatus.UNPROCESSABLE_ENTITY,
+  //     );
+  //   }
+
+  //   const createdUser = new this.userModel(createUserDto);
+  //   return await createdUser.save();
+  // }
 
   findAll() {
-    return `This action returns all user`;
+    return this.userModel.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: string, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    return this.userModel.findByIdAndDelete(id);
   }
 }
