@@ -12,12 +12,14 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Users.name) private userModel: Model<Users>,
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -38,9 +40,14 @@ export class AuthService {
   async login(loginUser: CreateAuthDto): Promise<{ access_token: string }> {
     const { username, password } = loginUser;
 
-    const user = await this.userModel.findOne({
-      username: username,
-    });
+    const user = await this.userModel
+      .findOne({
+        username: username,
+      })
+      .lean();
+
+    const test = await this.userService.findByUsername(username);
+    console.log('USER INFO: ', test);
 
     if (!user) {
       throw new BadRequestException(username, 'Wrong username credentials!');
@@ -53,11 +60,13 @@ export class AuthService {
       throw new BadRequestException(password, 'Wrong password credentials!');
     }
 
-    const payload = { sub: user._id, username: user.username };
+    // const payload = { sub: user._id, username: user.username };
+    const payload = { user };
     console.log(payload);
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      ...user,
     };
   }
 
