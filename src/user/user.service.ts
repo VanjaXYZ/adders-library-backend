@@ -40,4 +40,9 @@ export class UserService {
   remove(id: string) {
     return this.userModel.findByIdAndDelete(id);
   }
+
+  public findByUsername(username: string) {
+    const findUser = this.userModel.findOne({ username: username });
+    return findUser;
+  }
 }
