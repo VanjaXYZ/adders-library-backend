@@ -3,16 +3,14 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Users } from 'src/schemas/users.schema';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Users } from '../schemas/users.schema';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
+import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
